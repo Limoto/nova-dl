@@ -1,0 +1,17 @@
+Tento skript slouží ke stahování videí z archiv.nova.cz. Vyžaduje zkompilovanou binárku rtmpdumpu (http://lkcl.net/rtmp/).
+
+Použití:
+
+   1. Najdi si na archiv.nova.cz pořad, kterej chceš stáhnout
+   2. Rozbal přiloženej tarball a spusť skript nova-dl.py v něm:
+
+      ./nova-dl.py http://archiv.nova.cz/multimedia/televizni-noviny-19-5-2009.html
+
+   3. Skript standardně uloží video ve "vysoké" kvalitě do souboru název-pořádu.flv, v našem případě tedy 009-05-19_TN_tn.flv
+
+Volby:
+
+  -q QUALITY, --quality=QUALITY
+                        Vybere kvalitu (low/high)
+  -o OUTPUT, --output=OUTPUT
+                        Nastaví cílový soubor
