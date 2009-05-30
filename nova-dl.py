@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from optparse import OptionParser
-import urllib, re, os, thread
+import urllib, re, os
 from xml.dom.minidom import parseString as xml_parseString
 from time import sleep
 
@@ -35,19 +35,9 @@ def main():
     else:
       output = os.path.basename(stream) + '.flv'
     
-    global retval
-    retval = None
-#    last_size=0
-    
-#    thread.start_new_thread(download_rtmp, (url, playpath, app, swfUrl, tcUrl, pageUrl, output) )
-#    while retval == None:
-#      sleep(1)
-#      size = os.path.getsize(output)
-#      print "Downloaded %s KiB of ? (%s KiB/s)" %( size/1024, (size-last_size)/1024)
-#      last_size = size
-    download_rtmp(url, playpath, app, swfUrl, tcUrl, pageUrl, output)
+    retval = download_rtmp(url, playpath, app, swfUrl, tcUrl, pageUrl, output)
 
-    if retval:
+    if retval == 0:
       print "Download completed without errors"
     else:
       print "Download failed"
@@ -81,8 +71,7 @@ def get_server(serverlist, id):
       return ( server.getAttribute('url'), server.getAttribute('type') )
 
 def download_rtmp(url, playpath, app, swfUrl, tcUrl, pageUrl, output):
-    global retval
-    retval = os.system('./rtmpdump --rtmp "%s" --playpath "%s" --app "%s" --swfUrl "%s" --tcUrl "%s" --pageUrl "%s" -o "%s"' %(url, playpath, app, swfUrl, tcUrl, pageUrl, output) )
+    return os.system('./rtmpdump --rtmp "%s" --playpath "%s" --app "%s" --swfUrl "%s" --tcUrl "%s" --pageUrl "%s" -o "%s"' %(url, playpath, app, swfUrl, tcUrl, pageUrl, output) )
 
 if __name__ == "__main__":
   main()
