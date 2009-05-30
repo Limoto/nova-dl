@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from optparse import OptionParser
 import urllib, re, os, thread
 from xml.dom.minidom import parseString as xml_parseString
@@ -74,8 +75,10 @@ def get_server(serverlist, id):
     if server.getAttribute('id') == id:
       return ( server.getAttribute('url'), server.getAttribute('type') )
       
-  #server nenalezen
-  return None
+  #server nenalezen, použije se primární
+  for server in serverlist.getElementsByTagName('flvserver'):
+    if server.getAttribute('primary') == "true":
+      return ( server.getAttribute('url'), server.getAttribute('type') )
 
 def download_rtmp(url, playpath, app, swfUrl, tcUrl, pageUrl, output):
     global retval
