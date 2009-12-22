@@ -53,7 +53,7 @@ def get_xmls_from_videopage(videopage_url):
   videopage = urllib.urlopen(videopage_url).read()
   
   media_id = re.search(r'var media_id = "(\d+)";', videopage).group(1)
-  site_id = re.search(r'var site_id = "(\d+)";', videopage).group(1)
+  site_id = re.search(r'var site_id = (\d+);', videopage).group(1)
   
   serverlist = urllib.urlopen("http://tn.nova.cz/bin/player/config.php?media_id=%s&site_id=%s" %(media_id, site_id) ).read()
   playlist = urllib.urlopen("http://tn.nova.cz/bin/player/serve.php?media_id=%s&site_id=%s" %(media_id, site_id) ).read()
