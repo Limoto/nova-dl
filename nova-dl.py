@@ -13,6 +13,10 @@ optparser.add_option('-o', '--output', dest='output', help='Sets target file')
 def main():
   serverlist, playlist = get_xmls_from_videopage(arguments[0])
   
+  if playlist.documentElement.tagName == "error":
+    print "Chyba: " + playlist.getElementsByTagName('message')[0].lastChild.wholeText.strip()
+    exit(1)
+  
   stream = playlist.getElementsByTagName('item')[0].getAttribute('src')
   server_id = playlist.getElementsByTagName('item')[0].getAttribute('server')
   
