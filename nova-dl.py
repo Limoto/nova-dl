@@ -5,7 +5,7 @@ import urllib, re, os
 from xml.dom.minidom import parseString as xml_parseString
 from time import sleep
 
-optparser = OptionParser(version="%prog 20090520")
+optparser = OptionParser(version="%prog git")
 optparser.add_option('-q', '--quality', choices=('low', 'high'), dest='quality', default='high', help='Sets quality to download in')
 optparser.add_option('-o', '--output', dest='output', help='Sets target file')
 (options, arguments) = optparser.parse_args()
