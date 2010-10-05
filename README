@@ -1,4 +1,4 @@
-Tento skript slouží ke stahování videí z archiv.nova.cz. Vyžaduje zkompilovanou binárku rtmpdumpu (http://lkcl.net/rtmp/).
+Tento skript slouží ke stahování videí z archiv.nova.cz. Vyžaduje zkompilovanou binárku rtmpdumpu (http://rtmpdump.mplayerhq.hu/).
 
 Použití:
 
@@ -7,7 +7,7 @@ Použití:
 
       ./nova-dl.py http://archiv.nova.cz/multimedia/comeback-38-dil-bejk.html
 
-   3. Skript standardně uloží video ve "vysoké" kvalitě do souboru název-pořádu.flv, v našem případě tedy 2010-04-21_Comeback-Bejk-8-dil-D309637_tn.fl
+   3. Skript standardně uloží video ve "vysoké" kvalitě do souboru název-pořádu.flv, v našem případě tedy 2010-04-21_Comeback-Bejk-8-dil-D309637_tn.flv
 
 Volby:
 
@@ -15,3 +15,5 @@ Volby:
                         Vybere kvalitu (low/high)
   -o OUTPUT, --output=OUTPUT
                         Nastaví cílový soubor
+  -g, --get-url
+                        Nestahuje, použe vypíše RTMP adresu videa (dá se použít v některých přehrávačích)
