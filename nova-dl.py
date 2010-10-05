@@ -8,6 +8,7 @@ from time import sleep
 optparser = OptionParser(version="%prog git")
 optparser.add_option('-q', '--quality', choices=('low', 'high'), dest='quality', default='high', help='Sets quality to download in')
 optparser.add_option('-o', '--output', dest='output', help='Sets target file')
+optparser.add_option('-g', '--get-url', action='store_true', dest='geturl', default=False, help='Only print the RTMP URL for use with media players.')
 (options, arguments) = optparser.parse_args()
 
 def main():
@@ -24,27 +25,24 @@ def main():
   
   # RTMP
   if type == 'stream':
-    swfUrl = 'http://archiv.nova.cz/static/cz/shared/app/MediaCenter_Catchup.swf'
-    app = 'vod'
-    pageUrl = arguments[0]
-    tcUrl = url
-    
     if options.quality == 'low':
-      playpath = stream
+      url += '?slist=' + stream
     else:
-      playpath = 'mp4:' + stream
+      url += '?slist=' + 'mp4:' + stream
     
     if options.output:
       output = options.output
     else:
       output = os.path.basename(stream) + '.flv'
-    
-    retval = download_rtmp(url, playpath, app, swfUrl, tcUrl, pageUrl, output)
 
-    if retval == 0:
-      print "Download completed without errors"
+    if options.geturl:
+      print url
     else:
-      print "Download failed"
+      retval = download_rtmp(url, output)
+      if retval == 0:
+        print "Download completed without errors"
+      else:
+        print "Download failed"
       
   
   # HTTP
@@ -74,8 +72,8 @@ def get_server(serverlist, id):
     if server.getAttribute('primary') == "true":
       return ( server.getAttribute('url'), server.getAttribute('type') )
 
-def download_rtmp(url, playpath, app, swfUrl, tcUrl, pageUrl, output):
-    return os.system('./rtmpdump --rtmp "%s" --playpath "%s" --app "%s" --swfUrl "%s" --tcUrl "%s" --pageUrl "%s" -o "%s"' %(url, playpath, app, swfUrl, tcUrl, pageUrl, output) )
+def download_rtmp(url, output):
+    return os.system('./rtmpdump --rtmp "%s" --flv "%s"' %(url, output) )
 
 if __name__ == "__main__":
   main()
