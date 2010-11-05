@@ -54,14 +54,24 @@ class MainWindow(QtGui.QWidget):
         grid.addWidget(self.textArea, 3, 0, 5, 3)
         
         about_label = QtGui.QLabel(u'<a href="about">O programu</a>')
-        self.connect(about_label, QtCore.SIGNAL('linkActivated(QString)'), self.about)
+        about_label.linkActivated.connect(self.about)
         grid.addWidget(about_label, 8,0)
         
         self.setLayout(grid)
+        self.exe = self.findExe()
         
     def showDialog(self):
         self.save_lineedit.setText( QtGui.QFileDialog.getSaveFileName(self, u"Uložit do", self.save_lineedit.text(), u"Flash video (*.flv)" ) )
-      
+
+    def findExe(self):
+        if os.name == 'nt':
+            return "nova-dl.exe"
+        else:
+            if os.path.isfile('./nova-dl.py'):
+                return './nova-dl.py'
+            else:
+                return 'nova-dl'
+
     def run(self):
         self.textArea.clear()
         self.button.setCurrentIndex(1)
@@ -73,17 +83,10 @@ class MainWindow(QtGui.QWidget):
         arg = ["-q", q,
                '-o', '"%s"' %self.save_lineedit.text(),
                str(self.url_lineedit.text() ) ]
-        if os.name == 'nt':
-            exe = "nova-dl.exe"
-        else:
-            if os.path.isfile('./nova-dl.py'):
-                exe = './nova-dl.py'
-            else:
-                exe = 'nova-dl'
         
-        self.p.start(exe, arg )
         self.connect(self.p, QtCore.SIGNAL('readyRead()'), self.readyRead)
         self.connect(self.p, QtCore.SIGNAL('finished(int, QProcess::ExitStatus)'), self.finished)
+        self.p.start(self.exe, arg )
         
     def stop(self):
         self.p.terminate()
