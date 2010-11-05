@@ -20,7 +20,7 @@ class MainWindow(QtGui.QWidget):
         save_label = QtGui.QLabel(u"Uložit do:")
         self.save_lineedit = QtGui.QLineEdit()
         save_browsebutton = QtGui.QPushButton(u"Najít")
-        self.connect(save_browsebutton, QtCore.SIGNAL('clicked()'), self.showDialog )
+        save_browsebutton.clicked.connect(self.showDialog)
         grid.addWidget(save_label, 1, 0)
         grid.addWidget(self.save_lineedit, 1, 1)
         grid.addWidget(save_browsebutton, 1, 2)
@@ -32,11 +32,11 @@ class MainWindow(QtGui.QWidget):
         
         down_button = QtGui.QPushButton(u"STÁHNI")
         down_button.setStyleSheet( "background-color: green; color: white")
-        self.connect(down_button, QtCore.SIGNAL('clicked()'), self.run )
+        down_button.clicked.connect(self.run)
         
         stop_button = QtGui.QPushButton(u"STOP")
         stop_button.setStyleSheet("background-color: red; color: white")
-        self.connect(stop_button, QtCore.SIGNAL('clicked()'), self.stop)
+        stop_button.clicked.connect(self.stop)
         
         self.button = QtGui.QStackedWidget()
         self.button.addWidget(down_button)
@@ -84,9 +84,9 @@ class MainWindow(QtGui.QWidget):
                '-o', '"%s"' %self.save_lineedit.text(),
                str(self.url_lineedit.text() ) ]
         
-        self.connect(self.p, QtCore.SIGNAL('readyRead()'), self.readyRead)
-        self.connect(self.p, QtCore.SIGNAL('finished(int, QProcess::ExitStatus)'), self.finished)
         self.p.start(self.exe, arg )
+        self.p.readyRead.connect(self.readyRead)
+        self.p.finished.connect(self.finished)
         
     def stop(self):
         self.p.terminate()
@@ -105,8 +105,8 @@ class MainWindow(QtGui.QWidget):
         self.button.setCurrentIndex(0)
 
     def about(self, url):
-      QtGui.QMessageBox.about(self, "O nova-dl", QtCore.QString.fromUtf8('''Autor: Jakub Lužný
-Ikona: Roman Šmakal''') )
+      QtGui.QMessageBox.about(self, "O nova-dl", u'''Autor: Jakub Lužný
+Ikona: Roman Šmakal''' )
 
         
 app = QtGui.QApplication(sys.argv)
