@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui, QtCore
 import sys, os
+from os.path import basename
 
 class MainWindow(QtGui.QWidget):
     def __init__(self):
@@ -18,7 +19,7 @@ class MainWindow(QtGui.QWidget):
         grid.addWidget( self.url_lineedit, 0, 1, 1, 2)
         
         save_label = QtGui.QLabel(u"Uložit do:")
-        self.save_lineedit = QtGui.QLineEdit()
+        self.save_lineedit = QtGui.QLineEdit( QtCore.QDir.homePath() )
         save_browsebutton = QtGui.QPushButton(u"Najít")
         save_browsebutton.clicked.connect(self.showDialog)
         grid.addWidget(save_label, 1, 0)
@@ -60,6 +61,11 @@ class MainWindow(QtGui.QWidget):
         self.setLayout(grid)
         self.exe = self.findExe()
         
+        self.fg = FilenameGetter(self.exe, QtCore.QDir.homePath() )
+        self.url_lineedit.textChanged.connect(self.fg.getFilename)
+        self.fg.gotFilename.connect(self.save_lineedit.setText)
+        self.save_lineedit.cursorPositionChanged.connect(self.fg.abort)
+                
     def showDialog(self):
         self.save_lineedit.setText( QtGui.QFileDialog.getSaveFileName(self, u"Uložit do", self.save_lineedit.text(), u"Flash video (*.flv)" ) )
 
@@ -108,7 +114,31 @@ class MainWindow(QtGui.QWidget):
       QtGui.QMessageBox.about(self, "O nova-dl", u'''Autor: Jakub Lužný
 Ikona: Roman Šmakal''' )
 
+class FilenameGetter(QtCore.QObject):
+    p = QtCore.QProcess()
+    gotFilename = QtCore.pyqtSignal(QtCore.QString)
+    
+    def __init__(self, exe, dest):
+        QtCore.QObject.__init__(self)
+        self.exe = exe
+        self.dest = dest
+        self.p.finished.connect(self.processFinished)
+        self.p.setReadChannel(QtCore.QProcess.StandardOutput)
         
+    def getFilename(self, url):
+        self.p.kill()
+        self.p.start(self.exe, ['-g', url])
+        
+    def processFinished(self):
+        url = str( self.p.readAll() ).strip()
+        if url:
+            url = QtCore.QString( self.dest + QtCore.QDir.separator() + basename(url) + '.flv' )
+            self.gotFilename.emit(url)
+    
+    def abort(self):
+        self.p.kill()
+        self.p.readAll()
+             
 app = QtGui.QApplication(sys.argv)
 
 mw = MainWindow()
