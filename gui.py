@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui, QtCore
-import sys, os
+import sys, os, re
 from os.path import basename
 
 class MainWindow(QtGui.QWidget):
@@ -48,15 +48,20 @@ class MainWindow(QtGui.QWidget):
         grid.addWidget(self.quality_combobox, 2, 1)
         grid.addWidget(self.button, 2, 2)
         
+        self.progress = QtGui.QProgressBar()
+        self.progress.setRange(0, 1000)
+        
+        grid.addWidget(self.progress, 3, 0, 1, 3)
+        
         self.textArea = QtGui.QTextEdit()
         self.textArea.setReadOnly(True)
         self.textArea.setOverwriteMode(False)
         
-        grid.addWidget(self.textArea, 3, 0, 5, 3)
+        grid.addWidget(self.textArea, 4, 0, 5, 3)
         
         about_label = QtGui.QLabel(u'<a href="about">O programu</a>')
         about_label.linkActivated.connect(self.about)
-        grid.addWidget(about_label, 8,0)
+        grid.addWidget(about_label, 9,0)
         
         self.setLayout(grid)
         self.exe = self.findExe()
@@ -81,6 +86,7 @@ class MainWindow(QtGui.QWidget):
     def run(self):
         self.textArea.clear()
         self.button.setCurrentIndex(1)
+        self.progress.setValue(0)
         
         q = 'high' if self.quality_combobox.currentIndex() == 0 else "low"
 
@@ -98,7 +104,12 @@ class MainWindow(QtGui.QWidget):
         self.p.terminate()
     
     def readyRead(self):
-        self.textArea.append( QtCore.QString( self.p.readAll() ) )
+        s = self.p.readAll()
+        self.textArea.append( QtCore.QString( s ) )
+        
+        r = re.findall(r"\((.+)?%\)", s)
+        if r:
+            self.progress.setValue( int( float(r[-1])*10 ) )
         
     def finished(self, exitCode, exitStatus):
         if exitCode == 0 and exitStatus == QtCore.QProcess.NormalExit:
@@ -109,6 +120,7 @@ class MainWindow(QtGui.QWidget):
         
         self.p.close()
         self.button.setCurrentIndex(0)
+        self.progress.setValue(100*10)
 
     def about(self, url):
       QtGui.QMessageBox.about(self, "O nova-dl", u'''Autor: Jakub Lužný
