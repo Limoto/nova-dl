@@ -73,7 +73,11 @@ def get_server(serverlist, id):
       return ( server.getAttribute('url'), server.getAttribute('type') )
 
 def download_rtmp(url, output):
-    return os.system('./rtmpdump --rtmp "%s" --flv "%s"' %(url, output) )
+  if os.path.isfile('./rtmpdump'):
+    exe = './rtmpdump'
+  else:
+    exe = 'rtmpdump'
+  return os.system('%s --rtmp "%s" --flv "%s"' %(exe, url, output) )
 
 if __name__ == "__main__":
   main()
